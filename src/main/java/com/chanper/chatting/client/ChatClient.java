@@ -1,9 +1,10 @@
 package com.chanper.chatting.client;
 
 
-import com.chanper.chatting.message.PingMessage;
+import com.chanper.chatting.message.impl.PingMessage;
 import com.chanper.chatting.protocol.MessageCodec;
 import com.chanper.chatting.protocol.ProcotolFrameDecoder;
+import com.chanper.chatting.utils.Config;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
@@ -60,7 +61,7 @@ public class ChatClient {
                 }
             });
             
-            Channel channel = bootstrap.connect("localhost", 8080).sync().channel();
+            Channel channel = bootstrap.connect("localhost", Config.getServerPort()).sync().channel();
             channel.closeFuture().sync();
         } catch (Exception e) {
             log.error("client error", e);

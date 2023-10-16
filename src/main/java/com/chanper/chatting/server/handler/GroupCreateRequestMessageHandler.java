@@ -1,8 +1,8 @@
 package com.chanper.chatting.server.handler;
 
 
-import com.chanper.chatting.message.GroupCreateRequestMessage;
-import com.chanper.chatting.message.GroupCreateResponseMessage;
+import com.chanper.chatting.message.impl.GroupCreateRequestMessage;
+import com.chanper.chatting.message.impl.GroupCreateResponseMessage;
 import com.chanper.chatting.server.session.Group;
 import com.chanper.chatting.server.session.GroupSession;
 import com.chanper.chatting.server.session.GroupSessionFactory;

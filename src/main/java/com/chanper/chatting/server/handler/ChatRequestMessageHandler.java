@@ -1,8 +1,8 @@
 package com.chanper.chatting.server.handler;
 
 
-import com.chanper.chatting.message.ChatRequestMessage;
-import com.chanper.chatting.message.ChatResponseMessage;
+import com.chanper.chatting.message.impl.ChatRequestMessage;
+import com.chanper.chatting.message.impl.ChatResponseMessage;
 import com.chanper.chatting.server.session.SessionFactory;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;

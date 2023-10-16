@@ -1,8 +1,8 @@
 package com.chanper.chatting.server.handler;
 
 
-import com.chanper.chatting.message.GroupQuitRequestMessage;
-import com.chanper.chatting.message.GroupQuitResponseMessage;
+import com.chanper.chatting.message.impl.GroupQuitRequestMessage;
+import com.chanper.chatting.message.impl.GroupQuitResponseMessage;
 import com.chanper.chatting.server.session.GroupSession;
 import com.chanper.chatting.server.session.GroupSessionFactory;
 import io.netty.channel.ChannelHandler;

@@ -1,6 +1,7 @@
 package com.chanper.chatting.client;
 
-import com.chanper.chatting.message.*;
+import com.chanper.chatting.message.AbstractResponseMessage;
+import com.chanper.chatting.message.impl.*;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
@@ -12,8 +13,8 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.chanper.chatting.client.Constants.COMMA;
-import static com.chanper.chatting.client.Constants.SPACE;
+import static com.chanper.chatting.utils.Constants.COMMA;
+import static com.chanper.chatting.utils.Constants.SPACE;
 
 /**
  * @author chanper
@@ -30,49 +31,6 @@ public class BizHandler extends ChannelInboundHandlerAdapter {
     // Tools
     static Scanner sc = new Scanner(System.in);
     
-    // 连接建立后触发
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) {
-        new Thread(() -> {
-            String username = login(ctx);
-            
-            System.out.println("登陆中......");
-            try {
-                WAIT_FOR_LOGIN.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            
-            // 登陆失败：关闭 channel 结束
-            if (!LOGIN.get()) {
-                ctx.channel().close();
-                return;
-            }
-            
-            printMenu();
-            handleCommand(ctx, username);
-        }, "Command Handler").start();
-    }
-    
-    // 接收响应消息
-    @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        handleResponse(msg);
-    }
-    
-    @Override
-    public void channelInactive(ChannelHandlerContext ctx) {
-        log.debug("连接已断开, 按任意键退出...");
-        EXIT.set(true);
-    }
-    
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        log.debug("连接异常断开，error：{}", cause.getMessage());
-        EXIT.set(true);
-    }
-    
-    
     // 用户登录
     private static String login(ChannelHandlerContext ctx) {
         System.out.print("用户名：");
@@ -84,7 +42,6 @@ public class BizHandler extends ChannelInboundHandlerAdapter {
         ctx.writeAndFlush(loginRequest);
         return username;
     }
-    
     
     private static void printMenu() {
         System.out.println("================MENU===============");
@@ -151,6 +108,48 @@ public class BizHandler extends ChannelInboundHandlerAdapter {
                 || msg instanceof GroupQuitResponseMessage) {
             System.out.println(((AbstractResponseMessage) msg).getReason());
         }
+    }
+    
+    // 连接建立后触发
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) {
+        new Thread(() -> {
+            String username = login(ctx);
+            
+            System.out.println("登陆中......");
+            try {
+                WAIT_FOR_LOGIN.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            
+            // 登陆失败：关闭 channel 结束
+            if (!LOGIN.get()) {
+                ctx.channel().close();
+                return;
+            }
+            
+            printMenu();
+            handleCommand(ctx, username);
+        }, "Command Handler").start();
+    }
+    
+    // 接收响应消息
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        handleResponse(msg);
+    }
+    
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) {
+        log.debug("连接已断开, 按任意键退出...");
+        EXIT.set(true);
+    }
+    
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        log.debug("连接异常断开，error：{}", cause.getMessage());
+        EXIT.set(true);
     }
 }
 

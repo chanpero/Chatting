@@ -1,13 +1,17 @@
 package com.chanper.chatting.server;
 
 
-import com.chanper.chatting.message.PingMessage;
-import com.chanper.chatting.message.PongMessage;
+import com.chanper.chatting.message.impl.PingMessage;
+import com.chanper.chatting.message.impl.PongMessage;
 import com.chanper.chatting.protocol.MessageCodec;
 import com.chanper.chatting.protocol.ProcotolFrameDecoder;
 import com.chanper.chatting.server.handler.*;
+import com.chanper.chatting.utils.Config;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelDuplexHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -17,8 +21,6 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
-
-import java.net.SocketAddress;
 
 @Slf4j
 public class ChatServer {
@@ -34,7 +36,6 @@ public class ChatServer {
     static GroupChatRequestMessageHandler GROUP_CHAT_HANDLER = new GroupChatRequestMessageHandler();
     static GroupQuitRequestMessageHandler GROUP_QUIT_HANDLER = new GroupQuitRequestMessageHandler();
     static QuitHandler QUIT_HANDLER = new QuitHandler();
-    
     
     
     public static void main(String[] args) {
@@ -64,7 +65,7 @@ public class ChatServer {
                                 ctx.channel().close();
                             }
                         }
-                        
+
                         @Override
                         public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
                             if (msg instanceof PingMessage) {
@@ -87,7 +88,7 @@ public class ChatServer {
                 }
             });
             
-            Channel channel = serverBootstrap.bind(8080).sync().channel();
+            Channel channel = serverBootstrap.bind(Config.getServerPort()).sync().channel();
             channel.closeFuture().sync();
         } catch (InterruptedException e) {
             log.error("server error", e);
