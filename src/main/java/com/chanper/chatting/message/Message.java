@@ -1,5 +1,6 @@
 package com.chanper.chatting.message;
 
+import com.chanper.chatting.message.impl.*;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -25,8 +26,9 @@ public abstract class Message implements Serializable {
     public static final int GroupMembersResponseMessage = 13;
     public static final int PingMessage = 14;
     public static final int PongMessage = 15;
-    private static final Map<Integer, Class<?>> messageClasses = new HashMap<>();
-
+    
+    private static final Map<Integer, Class<? extends Message>> messageClasses = new HashMap<>();
+    
     static {
         messageClasses.put(LoginRequestMessage, LoginRequestMessage.class);
         messageClasses.put(LoginResponseMessage, LoginResponseMessage.class);
@@ -42,12 +44,14 @@ public abstract class Message implements Serializable {
         messageClasses.put(GroupChatResponseMessage, GroupChatResponseMessage.class);
         messageClasses.put(GroupMembersRequestMessage, GroupMembersRequestMessage.class);
         messageClasses.put(GroupMembersResponseMessage, GroupMembersResponseMessage.class);
+        messageClasses.put(PingMessage, PingMessage.class);
+        messageClasses.put(PongMessage, PongMessage.class);
     }
-
+    
     private int sequenceId;
     private int messageType;
-
-    public static Class<?> getMessageClass(int messageType) {
+    
+    public static Class<? extends Message> getMessageClass(int messageType) {
         return messageClasses.get(messageType);
     }
     

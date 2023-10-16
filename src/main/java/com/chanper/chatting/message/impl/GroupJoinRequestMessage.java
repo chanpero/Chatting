@@ -1,19 +1,19 @@
-package com.chanper.chatting.message;
+package com.chanper.chatting.message.impl;
 
+import com.chanper.chatting.message.Message;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
 @ToString(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class GroupJoinRequestMessage extends Message {
-    private String groupName;
     
     private String username;
-    
-    public GroupJoinRequestMessage(String username, String groupName) {
-        this.groupName = groupName;
-        this.username = username;
-    }
+    private String groupName;
     
     @Override
     public int getMessageType() {
