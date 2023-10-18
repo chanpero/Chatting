@@ -1,9 +1,10 @@
 package com.chanper.chatting.utils;
 
 import com.chanper.chatting.protocol.SerializerAlgorithm;
+import com.chanper.chatting.server.service.ServiceFactory;
 
-import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
 /**
@@ -18,8 +19,25 @@ public abstract class Config {
         try (InputStream in = Config.class.getResourceAsStream("/application.properties")) {
             properties = new Properties();
             properties.load(in);
-        } catch (IOException e) {
+            
+            // 加载 RPC 服务列表
+            loadServiceList();
+            
+        } catch (Exception e) {
             throw new ExceptionInInitializerError(e);
+        }
+    }
+    
+    /**
+     * 从配置文件中读取远程服务的实现，充当注册中心
+     */
+    private static void loadServiceList() throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        for (String serviceName : properties.stringPropertyNames()) {
+            if (serviceName.endsWith("Service")) {
+                Class<?> interfaceClass = Class.forName(serviceName);
+                Class<?> implClass = Class.forName(properties.getProperty(serviceName));
+                ServiceFactory.serviceMap.put(interfaceClass, implClass.getDeclaredConstructor().newInstance());
+            }
         }
     }
     
